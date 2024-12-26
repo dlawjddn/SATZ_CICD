@@ -52,7 +52,7 @@ jobs:
       
   deploy-on-server:
     needs: [build-application]
-    runs-on: ubuntu-24.02
+    runs-on: ubuntu-latest
     
     steps:
       - name: executing remote ssh commands using password
