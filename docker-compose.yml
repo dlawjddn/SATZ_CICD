@@ -1,0 +1,33 @@
+services:
+  server:
+    image: dlawjddn/cicd_prac:0.0.1
+    container_name: cicd-prac
+    networks:
+      - dnetwork
+    ports:
+      - "8080:8080"
+    command: ["java", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=dev", "-jar", "/app.jar"]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/test" ]
+      interval: 2s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    networks:
+      - dnetwork
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx_conf:/etc/nginx/conf.d
+    command: [ "/bin/sh", "-c", "nginx -t && nginx -g 'daemon off;'" ]
+    depends_on:
+      server:
+        condition: service_healthy
+
+
+networks:
+  dnetwork:
+    driver: bridge
