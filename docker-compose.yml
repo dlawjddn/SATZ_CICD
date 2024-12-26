@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  nginx-validator:
+    image: nginx:latest
+    container_name: nginx-validator
+    volumes:
+      - ./nginx_conf:/etc/nginx/conf.d
+    entrypoint: ["nginx", "-t", "-c", "/etc/nginx/nginx.conf"]
+    networks:
+      - dnetwork
+    restart: "no"
+
   server:
     build:
       context: .
@@ -10,6 +20,9 @@ services:
       - dnetwork
     ports:
       - "8080:8080"
+    depends_on:
+      nginx-validator:
+        condition: service_completed_successfully
 
   nginx:
     image: nginx:latest
@@ -21,19 +34,9 @@ services:
     volumes:
       - ./nginx_conf:/etc/nginx/conf.d
     depends_on:
-      spring-app:
-        condition: service_healthy
+      server:
+        condition: service_completed_successfully
     command: ["nginx", "-g", "daemon off;"]
-
-  nginx-validator:
-    image: nginx:latest
-    container_name: nginx-validator
-    volumes:
-      - ./nginx_conf:/etc/nginx/conf.d
-    entrypoint: ["nginx", "-t", "-c", "/etc/nginx/nginx.conf"]
-    networks:
-      - dnetwork
-    restart: "no"
 
 networks:
   dnetwork:
