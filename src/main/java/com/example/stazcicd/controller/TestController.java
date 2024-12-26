@@ -9,4 +9,9 @@ public class TestController {
     public String healthCheck() {
         return "on going!";
     }
+
+    @GetMapping("/conf")
+    public String checkDiffConf() {
+        return "different nginx conf is working";
+    }
 }

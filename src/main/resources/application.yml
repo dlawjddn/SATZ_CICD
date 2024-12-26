@@ -17,3 +17,10 @@ spring:
       on-profile: dev
 
 ---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+---
