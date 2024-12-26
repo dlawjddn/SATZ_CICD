@@ -62,5 +62,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: sh deploy.sh
+          script: |
+            ${{secrets.DEPLOY_CMD}}
   
