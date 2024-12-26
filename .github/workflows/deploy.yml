@@ -46,15 +46,21 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPONAME }}:0.0.1
 
   deploy-on-server:
-    needs: [build-application]
+    needs: [ build-application ]
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Grant permission for compose
-        run: chmod -R u+w /home/${{ secrets.USERNAME }}
+      - name: Create target directory and grant permission
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: chmod -R u+w /home/${{ secrets.USERNAME }}
 
       - name: Copy Docker Compose file to server
         uses: appleboy/scp-action@v0.1.2
@@ -76,4 +82,4 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            ${{secrets.DEPLOY_CMD}}
+            ${{ secrets.DEPLOY_CMD }}
