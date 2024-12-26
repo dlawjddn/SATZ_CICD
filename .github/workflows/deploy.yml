@@ -49,3 +49,18 @@ jobs:
 
     - name: Docker Push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPONAME }}:0.0.1
+      
+  deploy-on-server:
+    needs: [build-application]
+    runs-on: ubuntu-24.02
+    
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: sh deploy.sh
+  
