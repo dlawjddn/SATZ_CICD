@@ -1,4 +1,23 @@
 services:
+  database:
+    image: mysql:8.0.25
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: dlawjddn
+      MYSQL_DATABASE: cicd_prac
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - dnetwork
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -uroot -pdlawjddn || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
   server:
     image: dlawjddn/cicd_prac:0.0.1
     container_name: cicd-prac
@@ -7,11 +26,15 @@ services:
     ports:
       - "8080:8080"
     command: ["java", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=dev", "-jar", "/app.jar"]
+    depends_on:
+      database:
+        condition: service_healthy
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/test" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/test" ]
       interval: 5s
       timeout: 10s
       retries: 3
+      start_period: 30s
 
   nginx:
     image: nginx:latest
@@ -30,4 +53,8 @@ services:
 
 networks:
   dnetwork:
+    name: dnetwork
     driver: bridge
+
+volumes:
+  mysql_data:
