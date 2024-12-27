@@ -9,8 +9,8 @@ services:
     command: ["java", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=dev", "-jar", "/app.jar"]
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/test" ]
-      interval: 2s
-      timeout: 5s
+      interval: 5s
+      timeout: 10s
       retries: 3
 
   nginx:
