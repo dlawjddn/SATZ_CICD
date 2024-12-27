@@ -11,15 +11,15 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PERSONAL_TOKEN }}
+          submodules: true
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Set YML
-        run: echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -36,14 +36,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Set up Docker Buildx
-        run: docker buildx create --use
-
-      - name: Docker Build
-        run: docker buildx build --platform linux/amd64 --load --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPONAME }}:0.0.1 .
-
-      - name: Docker Push
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPONAME }}:0.0.1
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_PROD_REPONAME }}:0.0.1
 
   deploy-on-server:
     needs: [ build-application ]
