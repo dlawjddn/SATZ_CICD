@@ -8,7 +8,7 @@ services:
       - "8080:8080"
     command: ["java", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=dev", "-jar", "/app.jar"]
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/test" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/test" ]
       interval: 5s
       timeout: 10s
       retries: 3
