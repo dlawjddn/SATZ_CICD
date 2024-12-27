@@ -30,6 +30,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // health check(Actuator)
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 task copyConfiguration(type: Copy) {
