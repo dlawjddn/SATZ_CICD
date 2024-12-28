@@ -37,19 +37,22 @@ services:
       start_period: 30s
 
   nginx:
-    image: nginx:latest
+    image: nginx:stable-alpine
     container_name: nginx
     networks:
       - dnetwork
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx_conf:/etc/nginx/conf.d
+      - ./nginx_conf:/etc/nginx/conf.d  # NGINX 설정 파일 마운트
+      - /etc/letsencrypt/archive/study-dlawjddn.site/fullchain1.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/archive/study-dlawjddn.site/privkey1.pem:/etc/nginx/ssl/privkey.pem:ro
+
     command: [ "/bin/sh", "-c", "nginx -t && nginx -g 'daemon off;'" ]
     depends_on:
       server:
         condition: service_healthy
-
 
 networks:
   dnetwork:
