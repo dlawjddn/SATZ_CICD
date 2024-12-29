@@ -16,7 +16,6 @@ public class UserService {
     private final UserRepository userRepository;
     @Transactional
     public void saveUser() {
-        // TEST
         for (int i = 0; i < 100; i++) {
             userRepository.save(
                     User.builder()
